@@ -24,8 +24,11 @@ number = int(number)
 
 print('Number of particles in simulation = ' + str(number)+'\n')
 
-start_time = time.time()
+calctime = np.loadtxt('calctime.txt', usecols=range(1))
+calctime = int(calctime)
+print('Reading the coordinates of the particles... Hang tight for about '+ str(calctime)+ ' seconds.')
 
+start_time = time.time()
 X = []
 for n in range(1, 2*number + 1):
     X.append(np.loadtxt('positiononespeed.txt', usecols=range(n, n+1)))
@@ -35,11 +38,11 @@ X = np.array(X)
 iters = np.size(X[0])
 
 time_now = (time.time() - start_time)
-print ('Position read in ' + "%0.2f" %(time_now) + ' seconds.')
+print ('Position read in ' + "%0.2f" %(time_now) + ' seconds.\n')
 
 
 start_time = time.time()
-
+print('Reading the speed of the particles...')
 Speed = []
 
 for n in range(1, number+1):

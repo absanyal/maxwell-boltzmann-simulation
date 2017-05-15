@@ -24,6 +24,7 @@ ofstream outfile_position("positiononespeed.txt");
 ofstream outfile_particleno("numberofparticlesonespeed.txt");
 ofstream outfile_velocity("speedonespeed.txt");
 ofstream outfile_pressure("pressureonespeed.txt");
+ofstream outfile_calctime("calctime.txt");
 // ofstream debug_out("debug.txt"); //Uncomment this line to check the conservation of momentum and energy at each instant.
 
 class vector2d{
@@ -152,13 +153,11 @@ int main(){
           << "Enter the number of particles: ";
       cin >> number_of_particles;
       outfile_particleno << number_of_particles;
-      outfile_particleno.close();
       cout << endl;
 
-      double x0, y0, ux0, uy0, time_total, Dxt, Dxb, Dyt, Dyb,h;
-      time_total=120;
-      outfile_particleno.open("numberofparticlesonespeed.txt", std::ios_base::app);
-      outfile_particleno << " " << time_total;
+      double x0, y0, ux0, uy0, total_time, Dxt, Dxb, Dyt, Dyb,h;
+      total_time=120;
+      outfile_particleno << " " << total_time;
       Dxb = Dyb = 20; Dxt=800; Dyt=700;
       h=0.01;
       srand (time(NULL));
@@ -167,7 +166,7 @@ int main(){
 
       double v1_initial_x, v1_initial_y;
       cout << "Keeping in mind that v^2/"<< 2*number_of_particles << "=kT, for best result please keep v_x^2+v_y^2 around "<< 40000*number_of_particles << endl
-           << "Enter the initial velocity (vx, vy) for the single moving particle: ";
+           << "For the single moving particle, enter the initial velocity (vx, vy):  ";
       cin >> v1_initial_x >> v1_initial_y;
       cout << endl;
 	    parr[0].fillval(300,450, v1_initial_x, v1_initial_y);
@@ -182,10 +181,11 @@ int main(){
     double t, x_after_collision, y_after_collision, ux_after_collision, uy_after_collision, pressure, impulse_per_length, total_v2;
     int boundary_collision_count =0;
 
-	cout << "Particles initialized. \nCalculation started. \n";
+	cout << "Particles initialized... Calculation started. \n";
   time_t time_start= time(NULL);
+  int progress_percent=0;
 
-  for(t=0; t<=time_total; t=t+h)   //Master Loop: Drives time evolution through quantum h=1/60.
+  for(t=0; t<=total_time; t=t+h)   //Master Loop: Drives time evolution through quantum h=1/60.
   {
     //---------Writing to File------------------------------------------------//
        outfile_position << setprecision(3) << t;
@@ -242,23 +242,36 @@ int main(){
           for(int i=0; i<number_of_particles; i++)
             {
               total_v2 += pow(parr[i].ux,2)+pow(parr[i].uy,2);
-             }
+            }
+
+           progress_percent=int(t*100/total_time);
+           cout.flush();
+           cout << "\r [ "<< progress_percent+1 << "% ] ";
+           for(int i=0; i<progress_percent; i++)
+           {
+             cout << "#";
+           }
 
           pressure=0.5*impulse_per_length/h;
           outfile_pressure <<  setprecision(3) << t << "\t" << setprecision(5) << pressure  << endl;
          // debug_out << setprecision(4) << t << "\t" << setprecision(5) << total_v2  << endl;
      }  //Motion of the system has been solved for this instant.
 
-  outfile_position.close();
-  outfile_velocity.close();
-  outfile_pressure.close();
-
-
+  cout << endl;
   time_t time_finish= time(NULL);
   //debug_out << "Total no of boundary collisions were:" << boundary_collision_count << '\n';
+
   outfile_particleno.close();
-  std::cout << "The calculation took " << time_finish-time_start << " seconds."<< '\n'
+  outfile_pressure.close();
+  outfile_velocity.close();
+  outfile_position.close();
+  //debug_out.close();
+  outfile_calctime << time_finish-time_start;
+  outfile_calctime.close();
+
+  cout << "The calculation took " << time_finish-time_start << " seconds."<< '\n'
             << "Handing over control to visualization program. \n"
             << "---------------------------------------------------- \n \n";
+
   return 0;
 }
