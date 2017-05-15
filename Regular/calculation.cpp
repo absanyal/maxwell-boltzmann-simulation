@@ -25,6 +25,7 @@ ofstream outfile_particleno("numberofparticles.txt");
 ofstream outfile_velocity("speed.txt");
 ofstream outfile_pressure("pressure.txt");
 // ofstream debug_out("debug.txt"); //Uncomment this line to check the conservation of momentum and energy at each instant.
+ofstream outfile_calctime("calctime.txt");
 
 class vector2d{
   public:
@@ -154,8 +155,8 @@ int main(){
       outfile_particleno << number_of_particles;
       cout << endl;
 
-      double x0, y0, ux0, uy0, t_final, Dxt, Dxb, Dyt, Dyb,h;
-      t_final=120;
+      double x0, y0, ux0, uy0, total_time, Dxt, Dxb, Dyt, Dyb,h;
+      total_time=120;
       Dxb = Dyb = 20; Dxt=800; Dyt=700;
       h=0.01;
       srand (time(NULL));
@@ -173,10 +174,11 @@ int main(){
 
     double t, x_after_collision, y_after_collision, ux_after_collision, uy_after_collision, pressure, impulse_per_length, total_v2;
     int boundary_collision_count =0;
+    int progress_percent = 0;
 
-	cout << "Particles initialized.\nCalculation started. \n\n";
+	cout << "Particles initialized... Calculation started. \n";
   time_t time_start= time(NULL);
-  for(t=0; t<=t_final; t=t+h)   //Master Loop: Drives time evolution through quantum h=1/60.
+  for(t=0; t<=total_time; t=t+h)   //Master Loop: Drives time evolution through quantum h=1/60.
   {
     //---------Writing to File------------------------------------------------//
        outfile_position << setprecision(3) << t;
@@ -235,19 +237,32 @@ int main(){
               total_v2 += pow(parr[i].ux,2)+pow(parr[i].uy,2);
              }
 
+             progress_percent=int(t*100/total_time);
+             cout.flush();
+             cout << "\r [ "<< progress_percent+1 << "% ] ";
+             for(int i=0; i<progress_percent; i++)
+             {
+               cout << "#";
+             }
+
           pressure=0.5*impulse_per_length/h;
           outfile_pressure <<  setprecision(3) << t << "\t" << setprecision(5) << pressure  << endl;
          // debug_out << setprecision(4) << t << "\t" << setprecision(5) << total_v2  << endl;
      }  //Motion of the system has been solved for this instant.
 
-  outfile_position.close();
-  outfile_velocity.close();
-  outfile_pressure.close();
-
+  cout << endl;
 
   time_t time_finish= time(NULL);
   //debug_out << "Total no of boundary collisions were:" << boundary_collision_count << '\n';
   outfile_particleno.close();
+  outfile_particleno.close();
+  outfile_pressure.close();
+  outfile_velocity.close();
+  outfile_position.close();
+  //debug_out.close();
+  outfile_calctime << time_finish-time_start;
+  outfile_calctime.close();
+
   std::cout << "The calculation took " << time_finish-time_start << " seconds."<< '\n'
             << "Handing over control to visualization program. \n"
             << "---------------------------------------------------- \n \n";
