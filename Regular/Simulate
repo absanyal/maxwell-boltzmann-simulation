@@ -10,3 +10,4 @@ python Visualisation.py
 
 rm -rf HistogramData
 
+rm calctime.txt
