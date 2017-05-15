@@ -9,3 +9,5 @@ mkdir HistogramData
 python VisualisationUniform.py
 
 rm -rf HistogramData
+
+rm calctime.txt
