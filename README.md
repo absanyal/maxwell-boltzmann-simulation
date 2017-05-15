@@ -1,7 +1,7 @@
 # Maxwell-Boltzmann Distribution: Simulation
 This is a project to verify Maxwell-Boltzmann distribution by finding explicit solution to the classical equation of motion for each particles in a system.
 
-# System uirements
+# System Requirements
 Linux/UNIX Operating System, Python (>=2.7), PyGame
 
 # Instructions
