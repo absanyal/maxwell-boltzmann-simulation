@@ -1,0 +1,12 @@
+g++ -o calculation calculation.cpp
+
+./calculation
+
+rm calculation
+
+mkdir HistogramData
+
+python Visualisation.py
+
+rm -rf HistogramData
+
