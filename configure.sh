@@ -1,6 +1,6 @@
 #! /bin/bash
 
-chmod +x main
+chmod +x main.sh
 for d in */ ; do
     cd $d;
     chmod +x Simulate
@@ -40,20 +40,16 @@ fi
 echo "Let's check if you have pygame installed:"
 if [ $(sudo -H $PIP install pygame| grep -c "already satisfied") -eq 0 ];
 then
-    sudo -H $PIP install pygame
-    echo -e "Did you encounter any error? (yes/ no)"
+     sudo -H $PIP install pygame  &> /dev/null 
+    echo -e "Did you encounter any error? (Yes/ No)"
       read choice
-      if [ $choice= yes|| $choice= Yes ]
-	then echo "Then follow this link to install PyGame: https://askubuntu.com/questions/401342/how-to-download-pygame-in-python3-3 .\n";
-	exit 1;
-      elif [ $choice = no|| $choice = No ]
-      	then echo "PyGame is installed."
-      else 
-      	echo "Enter either  'yes' or 'no'" 
-	exit 1;
-      fi	
-else
- echo "PyGame is installed."
-fi
+      if [ $choice = yes ] || [ $choice = Yes ];
+	then 
+		echo -e "Then follow this link to install PyGame: https://askubuntu.com/questions/401342/how-to-download-pygame-in-python3-3 .\n"
+		exit 1
+      	fi	
+ else
+ 	echo "PyGame is installed.";
+ fi
 
 echo "We are ready to start the program."
